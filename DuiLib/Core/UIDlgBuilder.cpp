@@ -51,6 +51,7 @@ CControlUI* CDialogBuilder::Create(IDialogBuilderCallback* pCallback, CPaintMana
         LPCTSTR pstrName = NULL;
         LPCTSTR pstrValue = NULL;
         LPTSTR pstr = NULL;
+        int nFontId = 0;
         for( CMarkupNode node = root.GetChild() ; node.IsValid(); node = node.GetSibling() ) {
             pstrClass = node.GetName();
             if( _tcsicmp(pstrClass, _T("Image")) == 0 ) {
@@ -80,8 +81,7 @@ CControlUI* CDialogBuilder::Create(IDialogBuilderCallback* pCallback, CPaintMana
             }
             else if( _tcsicmp(pstrClass, _T("Font")) == 0 ) {
                 nAttributes = node.GetAttributeCount();
-				int id = -1;
-                LPCTSTR pFontName = NULL;
+				LPCTSTR pFontName = NULL;
                 int size = 12;
                 bool bold = false;
                 bool underline = false;
@@ -91,10 +91,7 @@ CControlUI* CDialogBuilder::Create(IDialogBuilderCallback* pCallback, CPaintMana
                 for( int i = 0; i < nAttributes; i++ ) {
                     pstrName = node.GetAttributeName(i);
                     pstrValue = node.GetAttributeValue(i);
-					if( _tcsicmp(pstrName, _T("id")) == 0 ) {
-						id = _tcstol(pstrValue, &pstr, 10);
-					}
-                    else if( _tcsicmp(pstrName, _T("name")) == 0 ) {
+					if( _tcsicmp(pstrName, _T("name")) == 0 ) {
                         pFontName = pstrValue;
                     }
                     else if( _tcsicmp(pstrName, _T("size")) == 0 ) {
@@ -116,8 +113,8 @@ CControlUI* CDialogBuilder::Create(IDialogBuilderCallback* pCallback, CPaintMana
 						shared = (_tcsicmp(pstrValue, _T("true")) == 0);
 					}
                 }
-                if( id >= 0 && pFontName ) {
-                    pManager->AddFont(id, pFontName, size, bold, underline, italic, shared);
+                if( pFontName ) {
+                    pManager->AddFont(nFontId++, pFontName, size, bold, underline, italic, shared);
                     if( defaultfont ) pManager->SetDefaultFont(pFontName, size, bold, underline, italic, shared);
                 }
             }
